@@ -109,11 +109,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   SCH_Init();
-  SCH_Add_Task(green, 100, 50);
-  SCH_Add_Task(yellow, 100, 100);
-  SCH_Add_Task(red, 100, 150);
-  SCH_Add_Task(blue, 100, 200);
-  SCH_Add_Task(one, 250, 0);
+  SCH_Add_Task(green, 100, 50, 1);
+  SCH_Add_Task(yellow, 100, 100, 2);
+  SCH_Add_Task(red, 100, 150, 3);
+  SCH_Add_Task(blue, 100, 200, 4);
+  SCH_Add_Task(one, 250, 0, 5);
+  SCH_Delete(4);
   while (1)
   {
 	  SCH_Dispatch_Tasks();

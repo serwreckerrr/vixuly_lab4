@@ -12,7 +12,7 @@ void SCH_Init(void) {
     SCH_head = NULL;
 }
 
-void SCH_Add_Task(void (*pFunction)(void), uint32_t DELAY, uint32_t PERIOD) {
+void SCH_Add_Task(void (*pFunction)(void), uint32_t DELAY, uint32_t PERIOD, uint32_t id) {
     sTask *newTask = (sTask *)malloc(sizeof(sTask));
     if (newTask == NULL) return;
 
@@ -21,6 +21,7 @@ void SCH_Add_Task(void (*pFunction)(void), uint32_t DELAY, uint32_t PERIOD) {
     newTask->Period = PERIOD;
     newTask->RunMe = 0;
     newTask->next = NULL;
+    newTask->taskid = id;
 
     if (SCH_head == NULL) {
         SCH_head = newTask;
@@ -68,6 +69,7 @@ void SCH_Dispatch_Tasks(void) {
 
         void (*taskFunc)(void) = SCH_head->pTask;
         uint32_t period = SCH_head->Period;
+        uint32_t id = SCH_head->taskid;
 
         // Save current task pointer
         sTask *temp = SCH_head;
@@ -82,7 +84,7 @@ void SCH_Dispatch_Tasks(void) {
 
         // Re-add periodic task
         if (period > 0) {
-            SCH_Add_Task(taskFunc, period, period);
+            SCH_Add_Task(taskFunc, period, period, id);
         }
 
         free(temp);
@@ -90,29 +92,31 @@ void SCH_Dispatch_Tasks(void) {
 }
 
 
-void SCH_Delete(sTask *task) {
-    if (SCH_head == NULL || task == NULL) return;
+void SCH_Delete(uint32_t id) {
+	if (!SCH_head) return;
 
-    sTask *current = SCH_head;
-    sTask *previous = NULL;
+	sTask *current = SCH_head;
+	sTask *previous = NULL;
 
-    while (current != NULL) {
-        if (current == task) {
-            if (previous == NULL) { // delete head
-                SCH_head = current->next;
-                if (SCH_head != NULL)
-                    SCH_head->Delay += current->Delay;
-            } else {
-                previous->next = current->next;
-                if (current->next != NULL)
-                    current->next->Delay += current->Delay;
-            }
-            free(current);
-            return;
-        }
-        previous = current;
-        current = current->next;
-    }
+	while (current != NULL) {
+		if (current->taskid == id) {
+
+			if (previous == NULL) {
+				SCH_head = current->next;
+				if (SCH_head) SCH_head->Delay += current->Delay;
+			} else {
+				previous->next = current->next;
+				if (current->next)
+					current->next->Delay += current->Delay;
+			}
+
+			free(current);
+			return;
+		}
+
+		previous = current;
+		current = current->next;
+	}
 }
 
 
