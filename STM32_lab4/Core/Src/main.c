@@ -109,7 +109,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   SCH_Init();
-  SCH_Add_Task(green, 100, 50, 1);
+  SCH_Add_Task(green, 100, 50, 1);//give id mannually
   SCH_Add_Task(yellow, 100, 100, 2);
   SCH_Add_Task(red, 100, 150, 3);
   SCH_Add_Task(blue, 100, 200, 4);
